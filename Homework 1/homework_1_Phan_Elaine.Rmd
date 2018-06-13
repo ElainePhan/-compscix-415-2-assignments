@@ -22,13 +22,14 @@ data("WorldCities")
 
 ```
 ?WorldCities
-Question 1
+Question 1 : How many observations and variables are there in this data set? What are
+some of the variable names? Type up your answer in your document using complete sentences.
 ```{r}
 
 glimpse(WorldCities)
 ```
 
-Question 2
+
 ```{r}
 
 WorldCities <- head(WorldCities, 200) # 200 rows
@@ -41,9 +42,13 @@ unique(reg)
 ```
 
 
+```{r}
 
+```
 View(WorldCities)
 
+QUESTION 2: There is a column called region in the data set. Can you extract this and show
+only the unique values?
 ```{r}
 country_col <- WorldCities$region
 unique(country_col)
@@ -54,8 +59,8 @@ region_col <- WorldCities$region
 unique(region_col)
 ```
 
-region_col <- WorldCities$region
-Quetsion 3
+
+
 
 ```{r}
 country_col <- select(WorldCities, country)
@@ -68,7 +73,8 @@ country_col <- select(WorldCities, country)
 country_col <- WorldCities %>% select(country)
 WorldCities %>% select(region) %>% head(5)
 ```
-Question 3
+QUESTION 3: Can you extract and show the unique entries from the country column in
+WorldCities using one line of code and two %>% operators? The output will look like this:
 ```{r}
 WorldCities %>% select(country) %>% unique()
 ```
@@ -77,7 +83,6 @@ WorldCities %>% select(country) %>% unique()
 
 Question 4
 ```{r}
-WorldCities %>% select(country) %>% head(5)
 ```
 ```{r}
 WorldCities %>% ggplot(aes(x = population)) +
@@ -88,7 +93,10 @@ xlab('City Population')
 ```{r}
 WorldCities %>% ggplot(aes(x = population)) +
 geom_histogram() +
-xlab('The Whole Citys Population ')
+xlab('The Whole Citys Population ') +
+  ylab('Count Number of Population') +
+  ggtitle('Poputaion Graph') +
+  theme_bw()
 ```
  
 
