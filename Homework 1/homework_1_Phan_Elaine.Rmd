@@ -1,0 +1,100 @@
+---
+title: "COMPSCIX 415.2 Homework 1"
+author: "Elaine Phan"
+date: "6/11/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+My Github repository for my assignments can be found at this URL: [https://github.com/ElainePhan/-compscix-415-2-assignments/blob/master/README.md](https://github.com/ElainePhan/-compscix-415-2-assignments/blob/master/README.md)
+and replace “https://github.com/ElainePhan/-compscix-415-2-assignments/blob/master/README.md” with your github repository URL which you can copy from your web browser.
+```{r load_packages, warning=FALSE, message=FALSE}
+library(mdsr)
+library(tidyverse)
+```
+
+
+
+```{r}
+data("WorldCities")
+
+```
+?WorldCities
+Question 1
+```{r}
+
+glimpse(WorldCities)
+```
+
+Question 2
+```{r}
+
+WorldCities <- head(WorldCities, 200) # 200 rows
+country_col <- WorldCities$country
+unique(country_col)
+```
+```{r}
+reg <- WorldCities$region
+unique(reg)
+```
+
+
+
+View(WorldCities)
+
+```{r}
+country_col <- WorldCities$region
+unique(country_col)
+```
+
+```{r}
+region_col <- WorldCities$region
+unique(region_col)
+```
+
+region_col <- WorldCities$region
+Quetsion 3
+
+```{r}
+country_col <- select(WorldCities, country)
+country_col <- WorldCities %>% select(country)
+WorldCities %>% select(region) %>% head(5)
+```
+
+```{r}
+country_col <- select(WorldCities, country)
+country_col <- WorldCities %>% select(country)
+WorldCities %>% select(region) %>% head(5)
+```
+Question 3
+```{r}
+WorldCities %>% select(country) %>% unique()
+```
+
+
+
+Question 4
+```{r}
+WorldCities %>% select(country) %>% head(5)
+```
+```{r}
+WorldCities %>% ggplot(aes(x = population)) +
+geom_histogram() +
+xlab('City Population')
+```
+
+```{r}
+WorldCities %>% ggplot(aes(x = population)) +
+geom_histogram() +
+xlab('The Whole Citys Population ')
+```
+ 
+
+
+
+
+
+
+
