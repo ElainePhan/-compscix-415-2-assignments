@@ -19,7 +19,7 @@ library(tidyverse)
 
 ```{r}
 data("WorldCities")
-
+#hello
 ```
 ?WorldCities
 Question 1 : How many observations and variables are there in this data set? What are
@@ -102,7 +102,10 @@ xlab('The Whole Citys Population ') +
 
 
 
-
+```{r}
+ggplot(data = mpg)
+```
+                
 
 
 
