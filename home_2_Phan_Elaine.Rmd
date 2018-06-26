@@ -200,4 +200,9 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) +
   geom_point() + 
   geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv,se = FALSE ))
 ```
+```{r}
+#3.7.1 
+#2. What does geom_col() do? How is it different to geom_bar()?
+#There are two types of bar charts: geom_bar makes the height of the bar proportional to the number of cases in each group (or if the weight aesthetic is supplied, the sum of the weights). If you want the heights of the bars to represent values in the data, use geom_col instead. 
+```
 
