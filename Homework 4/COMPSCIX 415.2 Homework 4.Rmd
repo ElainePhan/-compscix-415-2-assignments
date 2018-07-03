@@ -1,0 +1,201 @@
+---
+title: "COMPSCIX 415.2 Homework 4"
+author: "Elaine Phan"
+date: "7/3/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+library(nycflights13)
+library(tidyverse)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+1. Section 5.6.7: #2, #4 and #6 only. Extra Credit: Do #5
+Brainstorm at least 5 different ways to assess the typical delay characteristics of a group of flights. Consider the following scenarios:
+
+2. Come up with another approach that will give you the same output as not_cancelled %>% count(dest) and not_cancelled %>% count(tailnum, wt = distance) (without using count()). 
+A. not_cancelled %>% count(dest)
+B. not_cancelled %>% count(tailnum, wt = distance)
+```{r}
+not_cancelled <- flights %>% 
+  filter(!is.na(dep_delay), !is.na(arr_delay))
+#A.
+not_cancelled %>% group_by(dest) %>% summarize(n = n()) 
+#B.
+not_cancelled %>% group_by(tailnum) %>% summarize(n = sum(distance))
+
+```
+
+4. A.Look at the number of cancelled flights per day. B.Is there a pattern? C.Is the proportion of cancelled flights related to the average delay?
+
+```{r}
+# A. 
+flights %>% filter(is.na(dep_delay) | is.na(arr_delay)) %>%
+  group_by(month, day) %>% count(day)
+
+day <- as.numeric(strftime(flights$time_hour, format = "%j"))
+
+flights.1 <- flights %>%
+  mutate(day_of_month = day) 
+cancelled <- flights.1 %>% filter(is.na(dep_delay) | is.na(arr_delay)) %>%
+  add_count(month, day) %>% select(day_of_month, n) %>% distinct()
+ggplot(cancelled, aes(x = day_of_month, y = n)) + geom_point(alpha = .6) + 
+  geom_smooth(span = .85, se = FALSE)
+#B. The pattern looks like there is more cancel flights around day 10 of the month.
+#C.
+summary <- flights.1 %>% group_by(day_of_month) %>%
+  summarize(
+    num_cancelled = sum(is.na(dep_delay) & is.na(arr_delay)),
+    prop_cancelled = mean(is.na(dep_delay) & is.na(arr_delay)),
+    ave_delay = mean(dep_delay, na.rm = TRUE)
+  )
+
+ggplot(summary, aes(x = ave_delay, y = prop_cancelled)) + geom_point(alpha = .6) + 
+  geom_smooth(se=FALSE)
+#The average delay increases for the day the number of flights also increase. 
+```
+
+6. What does the sort argument to count() do. When might you use it?
+```{r}
+# When we Sort argument to count(), it sorts the coutput in decending order of n.
+# It allows you to see the min and max and also the different highest and lowerst occurring counts. You can use this to decide how to analyze the the data next and how you want to group your data dependign on it's values. 
+```
+
+Section 10.5: #1, #2, #3 and #6 only
+1. How can you tell if an object is a tibble? (Hint: try printing mtcars, which is a regular data frame).
+```{r}
+as_tibble(mtcars)
+class(as_tibble(mtcars))
+
+
+#To tell if an object is a tibble run or print the object and you will get "a tibble " classification. Using class() will also work.
+```
+2. Compare and contrast the following operations on a data.frame and equivalent tibble. What is different? Why might the default data frame behaviours cause you frustration?
+```{r}
+df <- data.frame(abc = 1, xyz = "a")
+df$x
+df[, "xyz"]
+df[, c("abc", "xyz")]
+#does not recognoze x from xyz, returns data from column xyz
+#df[,"xyz"] returns content in column xyz as a factor
+#df[,"abc", "xyz"] returns data frame of columns with xyz factor
+```
+
+```{r}
+df <- tibble(abc = 1, xyz = "a")
+df$x
+df[, "xyz"]
+df[, c("abc", "xyz")]
+#dfx = Does not recognize x from xyz, returns and error
+#df[,"xyz"] returns content in column xyz as a tibble
+#df[,"abc", "xyz"] returns data frame of columns with xyz as characters
+```
+3. If you have the name of a variable stored in an object, e.g. var <- "mpg", how can you extract the reference variable from a tibble?
+```{r}
+vari <- "carrier"
+flights[vari]
+```
+6. What option controls how many additional column names are printed at the footer of a tibble?
+```{r}
+# n_extra
+```
+
+Section 12.3.3: #2, #3 and #4 only
+Why does this code fail?
+```{r}
+#table4a %>% 
+#  gather(1999, 2000, key = "year", value = "cases")
+
+#The above code fails because the year needs to be in quotations "1999", "2000"
+```
+
+3. Why does spreading this tibble fail? How could you add a new column to fix the problem?
+
+```{r}
+people <- tribble(
+  ~name,             ~key,    ~value,
+  #-----------------|--------|------
+  "Phillip Woods",   "age",       45,
+  "Phillip Woods",   "height",   186,
+  "Phillip Woods",   "age",       50,
+  "Jessica Cordero", "age",       37,
+  "Jessica Cordero", "height",   156
+)
+
+# Phillip Woods is printed twice and has two ages. So you have to add a new column that recognize that there is Phillip Wood #1 and Philli[ Wood #2 .
+```
+4. Tidy the simple tibble below. Do you need to spread or gather it? What are the variables?
+
+```{r}
+preg <- tribble(
+  ~pregnant, ~male, ~female,
+  "yes",     NA,    10,
+  "no",      20,    12
+)
+
+# You need to gather the "sex" variable.
+#The variables are pregnany(y/n), sex (M/F)
+```
+
+Section 12.4.3: #1 and #2 only
+1. What do the extra and fill arguments do in separate()? Experiment with the various options for the following two toy datasets.
+```{r}
+#The separate() is a character vector. 
+# When there are too many pieces the  extra controls what happens.
+# When there are not enough pieces to fill out a new column fill controls what happens.
+
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
+  separate(x, c("one", "two", "three"), extra = "merge")
+
+tibble(x = c("a,b,c", "d,e", "f,g,i")) %>% 
+  separate(x, c("one", "two", "three"), fill = "left")
+```
+2. Both unite() and separate() have a remove argument. What does it do? Why would you set it to FALSE?
+```{r}
+#They have remove arguments that will remove it from the output in tibble 
+#You set it to False when you want both the original column and the transformed column's in your output in tibble. 
+
+
+```
+
+```{r}
+file_path<-'/Users/ephan/Documents/R\ for\ data\ analysis/Data\ Science\ with\ R\ HW/baby_names.txt'
+csv_data <- read_csv(file = file_path)
+```
+
+```{r}
+file_path<-'/Users/ephan/Documents/R\ for\ data\ analysis/Data\ Science\ with\ R\ HW/baby_names.csv'
+
+
+            
+```
+
+```{r}
+write_delim(csv_data, delim = '|', path= "/Users/ephan/Documents/R\ for\ data\ analysis/Data\ Science\ with\ R\ HW/baby_names.csv")
+```
+
+```{r}
+file_path<-'/Users/ephan/Documents/R\ for\ data\ analysis/Data\ Science\ with\ R\ HW/baby_names.csv'
+csv_data <- read_csv(file = file_path)
+```
+

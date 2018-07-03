@@ -4,9 +4,15 @@ author: "Elaine"
 date: "6/25/2018"
 output: html_document
 ---
-
+Down loaded Tidyverse and nycflights13
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(tidyverse)
+library(nycflights13)
+
+
 ```
 
 ## R Markdown
@@ -24,7 +30,174 @@ summary(cars)
 You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
-plot(pressure)
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+Section 3.8.1: all exercises
+1. What is the problem with this plot? How could you improve it?
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point()
+
+#This plot need a title. It also might have overlapping points know as overplotting. It is hard to see where the mass of data is . To avoid this use random noise to each point. 
+```
+2. What parameters to geom_jitter() control the amount of jittering?
+```{r}
+#The width and height parameters control the amount of jittering.
+```
+Compare and contrast geom_jitter() with geom_count().
+```{r}
+#geom_jitter:It adds a small amount of random variation to the location of each point, and is a useful way of handling overplotting caused by discreteness in smaller datasets.
+
+#geom_count:This is a variant geom_point that counts the number of observations at each location, then maps the count to point area. It useful when you have discrete data and overplotting.
+```
+
+4. What’s the default position adjustment for geom_boxplot()? Create a visualisation of the mpg dataset that demonstrates it.
+```{r}
+#The default position for geom_boxplot is dodge
+ggplot(mpg, aes(class, hwy)) + 
+  geom_boxplot(aes(color = displ))
+```
+Section 3.9.1: #2 and #4 only
+2. What does labs() do? Read the documentation.
+```{r}
+#Good labels are critical for making your plots accessible to a wider audience. Ensure the axis and legend labels display the full variable name. Use the plot title and subtitle to explain the main findings. It's common to use the caption to provide information about the data source.xlab(label), ylab(label), ggtitle(label, subtitle = NULL),The text for the axis, plot title or caption below the plot.the text for the subtitle for the plot which will be displayed below the title. Leave NULL for no subtitle.
+
+```
+4, A.What does the plot below tell you about the relationship between city and highway mpg? B. Why is coord_fixed() important? C. What does geom_abline() do?
+
+```{r}
+#A. The plot is a positive linear relationship when comparing the city mpg and the highway mpg. But the highway is more fuel efficient.
+#B. coord_fixed() is important because it ensures that one unit on the x-axis is the same length as one unit on the y-axis.Making the scale on each axis the same. This is important when comparing city and highway fuel efficiency in this graph to show the increase difference. 
+#C. geom_abline are  geoms that add reference lines (sometimes called rules) to a plot, either horizontal, vertical, or diagonal (specified by slope and intercept). These are useful for annotating plots.
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
+  geom_point() + 
+  geom_abline() +
+  coord_fixed()
+```
+Section 4.4: #1 and #2 only
+1. Why does this code not work?
+```{r}
+my_variable <- 10
+my_varıable
+
+# The i in variable is a 1 instead of an "i"
+```
+2. Tweak each of the following R commands so that they run correctly:
+```{r}
+library(tidyverse)
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+filter(mpg, cyl == 8)
+filter(diamonds, carat > 3)
+
+```
+
+Section 5.2.4: #1, #3 and #4 only.
+1. Find all flights that
+
+   A. Had an arrival delay of two or more hours
+      
+   B. Flew to Houston (IAH or HOU)
+   C. Were operated by United, American, or Delta
+   D. Departed in summer (July, August, and September)
+   E. Arrived more than two hours late, but didn’t leave late
+   F. Were delayed by at least an hour, but made up over 30 minutes in       flight
+    G.Departed between midnight and 6am (inclusive)
+
+
+```{r}
+filter(flights, arr_delay >= 120)
+```
+
+B. Flew to Houston (IAH or HOU)
+```{r}
+filter(flights, dest %in% c("IAH", "HOU"))
+filter(flights, dest == "IAH" | dest == "HOU")
+```
+
+C. Were operated by United, American, or Delta
+```{r}
+filter(flights, carrier %in% c("UA", "AA", "DL"))
+```
+ D. Departed in summer (July, August, and September)
+```{r}
+filter(flights, month %in% c(7,8,9))
+```
+ 
+E. Arrived more than two hours late, but didn’t leave late
+```{r}
+filter(flights, arr_delay > 120 & dep_delay <= 0)
+```
+
+ F. Were delayed by at least an hour, but made up over 30 minutes in       flight
+```{r}
+filter(flights, dep_delay >= 60 & arr_delay < (dep_delay - 30))
+```
+ 
+  G.Departed between midnight and 6am (inclusive)
+```{r}
+filter(flights, dep_time <= 600)
+```
+ 3. How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
+```{r}
+filter(flights, is.na(dep_time))
+#8255 rows of dep_time missing.
+#missing rows dep_delay, arr_time, arr_delay, and air_time
+#They might represent that the flights were canceled.  
+```
+
+4. 
+A. Why is NA ^ 0 not missing? B.Why is NA | TRUE not missing? C.Why is FALSE & NA not missing? D.Can you figure out the general rule? (NA * 0 is a tricky counterexample!) 
+```{r}
+#A.NA ^ 0 # Any value, even an unknown, raised to the 0 power = 1.
+
+#B. NA | TRUE # If either part of a Boolean OR is TRUE, the whole statement is TRUE. Doesn't matter if the other part is unknown.
+
+#C. FALSE & NA # If either part of a Boolean AND is FALSE, the whole statement is FALSE. Doesn't matter if the other part is unknown.
+
+#D. NA * 0 # This is a tricky counterexample! The answer should be 0, because any value, even an unknown, multiplied by 0 = 0.
+
+```
+
+Section 5.4.1: #1 and #3 only
+1. Brainstorm as many ways as possible to select dep_time, dep_delay, arr_time, and arr_delay from flights.
+```{r}
+select(flights, dep_time, dep_delay, arr_time, arr_delay)
+
+select(flights, -year, -month, -day, -sched_dep_time, -sched_arr_time,
+       -carrier, -flight, -tailnum, -origin, -dest, -air_time, -distance,
+       -hour, -minute, -time_hour)
+
+select(flights, starts_with("dep"), starts_with("arr"))
+
+select(flights, 4, 6, 7, 9)
+
+select(flights, 4:9, -5, -8)
+
+select(flights, dep_time:arr_delay, -sched_dep_time, -sched_arr_time)
+
+select(flights, dep_time:arr_delay, -(starts_with("sched")))
+
+select(flights, starts_with("dep"), 7, 9)
+
+select(flights, starts_with("arr"), 4, 6)
+
+select(flights, ends_with("time"), ends_with("delay"), -sched_dep_time,
+       -sched_arr_time, -air_time)
+
+select(flights, ends_with("delay"), dep_time, arr_time)
+
+```
+3. What does the one_of() function do? Why might it be helpful in conjunction with this vector?
+```{r}
+#When you make a vector of the names of the variables that you want, then you can use one_of() with select() to select the variables in the vector.  Example below.
+
+vars <- c("dep_delay", "arr_delay","year", "month", "day" )
+select(flights, one_of(vars))
+```
+
