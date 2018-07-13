@@ -5,26 +5,342 @@ date: "7/10/2018"
 output: html_document
 ---
 
+
+# Table of Content
+
+
+• RStudio and R Markdown/Notebooks
+
+• The tidyverse suite of packages
+
+• R basics
+
+• Data import/export
+
+• Visualization
+
+• Data munging and wrangling
+
+• EDA
+
+• git and Github (clone, commit, push)
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+library(tidyverse)
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+
 
 ```{r pressure, echo=FALSE}
 plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+# RStudio and R Markdown (3 points)
+
+1. Use markdown headers in your document to clearly separate each midterm question and add a table of contents to your document.
+
+```{r}
+# Table of contents located above
+```
+
+
+# The tidyverse packages (3 points)
+
+By now you’ve used at least five different packages from the tidyverse for plotting, data munging, reshaping data, importing/exporting data, and using tibbles (the tibble package is used for this without you even realizing it’s there).
+
+1. Can you name which package is associated with each task below?
+```{r}
+# Plotting = Ggplot
+# Data munging/wrangling = dplyr, tibbles
+# Reshaping (speading and gathering) data = tidyr
+# Importing/exporting data = readr
+
+```
+
+2. Now can you name two functions that you’ve used from each package that you listed above for these tasks?
+
+```{r}
+# Plotting = geom_point(), geom_smooth
+# Data munging/wrangling = filter(), summarize()
+# Reshaping data = gather() and spread() 
+# Importing/exporting data = read_csv(), read_delim()
+
+```
+
+
+# R Basics (1.5 points)
+
+1. Fix this code with the fewest number of changes possible so it works:
+
+```{r}
+My_data.name___is.too00ooLong <- c( 1 , 2 , 3 )
+```
+
+2. Fix this code so it works:
+
+```{r}
+my_string <- c('has', 'an', 'error', 'in', 'it')
+```
+
+3. Look at the code below and comment on what happened to the values in the vector.
+
+```{r}
+my_vector <- c(1, 2, '3', '4', 5) 
+my_vector
+
+# In the my_vector variable the code written has three integers and two characters. When you run the my_vector variable it turns all the values into characters
+```
+
+# Data import/export (3 points)
+
+1. Download the rail_trail.txt file from Canvas (in the Midterm Exam section) and successfully import it into R. Prove that it was imported successfully by including your import code and taking a glimpse of the result.
+
+```{r}
+# file_path<-'/Users/ephan/Desktop/Homework/Elaine_Phan_midterm.Rmd/rail_trail.txt'
+# csv_data <- read_csv(file = file_path)
+```
+
+```{r}
+# glimpse(csv_data)
+```
+
+2. Export the file into a comma-separated file and name it “rail_trail.csv”. Make sure you define the path correctly so that you know where it gets saved. Then reload the file. Include your export and import code and take another glimpse.
+
+```{r}
+file_path<-'/Users/ephan/Desktop/Homework/Elaine_Phan_midterm.Rmd/rail_trail.csv'
+```
+
+```{r}
+# write_delim(csv_data, delim = '|', path= "/Users/ephan/Desktop/Homework/Elaine_Phan_midterm.Rmd/rail_trail.csv")
+```
+
+```{r}
+# rail_trail.csv<-'/Users/ephan/Desktop/Homework/Elaine_Phan_midterm.Rmd/rail_trail.csv'
+# rail_trail.csv <- read_csv(file = rail_trail.csv)
+```
+
+```{r}
+# glimpse(rail_trail.csv)
+```
+
+
+# Visualization (6 points)
+
+1. Critique this graphic: give only three examples of what is wrong with this graphic. Be concise.
+
+```{r}
+# 1. The title "MRS. President" This title need to be bolded.
+# 2. The bubbles are not explained or clear and the colors do not have an explaination or legend. Why are M/F color and not others. 
+# 3. We don't know what the numbers in the bubbles mean. Are they percentage?
+```
+
+2. Reproduce this graphic using the diamonds data set.
+
+```{r}
+ggplot(data = diamonds) + 
+  geom_boxplot( mapping = aes(x = cut, y = carat, fill = color), position = 'identity')+
+  ylab('CARAT OF DIAMOND') +
+  xlab('CUT OF DIAMOND')+
+  coord_flip()
+```
+
+3. The previous graphic is not very useful. We can make it much more useful by changing one thing about it. Make the change and plot it again.
+
+```{r}
+# Dodge position allowes you to see and compare the carat's distribution  for each diamond cut and color. 
+ggplot(data = diamonds) + 
+  geom_boxplot( mapping = aes(x = cut, y = carat, fill = color), position = 'dodge')+
+  ylab('CARAT OF DIAMOND') +
+  xlab('CUT OF DIAMOND')+
+  coord_flip()
+```
+
+# Data munging and wrangling (6 points)
+
+1. Is this data “tidy”? If yes, leave it alone and go to the next problem. If no, make it tidy. Note: this data set is called table2 and is available in the tidyverse package. It should be ready for you to use after you’ve loaded the tidyverse package.
+
+```{r}
+table2
+```
+
+```{r}
+# The above table2 the type column and count column didn't make sense.
+# It makes more sense to list the case with its number as a column and the population and it's counts as a #separate column. Otherwise you have to look left to right and it will be hard to filter the data.
+spread(table2, key = type, value = count)
+```
+
+
+2. Create a new column in the diamonds data set called price_per_carat that shows the price of each
+diamond per carat (hint: divide). Only show me the code, not the output.
+
+```{r}
+diamonds <- diamonds %>% mutate(price_per_carat = price/carat) 
+
+```
+
+3. For each cut of diamond in the diamonds data set, how many diamonds, and what proportion, have a price > 10000 and a carat < 1.5? There are several ways to get to an answer, but your solution must use the data wrangling verbs from the tidyverse in order to get credit.
+
+
+```{r}
+smalldiamonds <- diamonds %>% group_by(cut) %>% 
+  summarize(
+    number_of_diamonds = n(),
+    group_below10K_smaller1.5carat = sum(price > 10000 & carat < 1.5),
+    group_proportion = mean(price > 10000 & carat < 1.5)
+  )
+smalldiamonds
+```
+
+
+```{r}
+dataset <- filter(diamonds, price>10000 & carat < 1.5)
+dataset
+```
+3A.  Do the results make sense? Why?
+3B. Do we need to be wary of any of these numbers? Why?
+
+```{r}
+# 3A. Yes the results makes sense, because only a small amount of the diamonds are small less then 1.5 carat # and have a high price over $10,000. When you look at the Y axis you see that there are more higher quality # cut diamonds(ideal, premium and very good) and less cut diamonds at  fair and good quality.
+# 3B. Yes, we should be wary of these numbers because the number of diamonds that fit this category is a small subset of diamonds and this can give bias to the over all data. We can have bias in this data set since the sample size is small we get more variation or noise in the data.  If we need to calculate or make predictions with this subset we get a larger or increase in our standard error. 
+ggplot(data = dataset) + 
+  geom_boxplot( mapping = aes(x = cut, y = carat, fill = color), position = 'dodge')+
+  ylab('CARAT OF DIAMOND for Price>10000 & Carat < 1.5') +
+  xlab('CUT OF DIAMOND for Price>10000 & Carat < 1.5')+
+  coord_flip()
+```
+
+
+# EDA (6 points)
+Take a look at the txhousing data set that is included with the ggplot2 package and answer these questions:
+
+1. During what time period is this data from?
+
+```{r}
+# Between the years of 2000 to 2015
+txhousing
+tail(txhousing)
+
+```
+
+2. How many cities are represented?
+```{r}
+# 46 cities are represented.
+nrow(distinct(txhousing, city))
+```
+
+3. Which city, month and year had the highest number of sales?
+
+```{r}
+# Houston, in July 2015 had the highest number of sales.
+txhousing %>%
+  group_by(city, month, year) %>%
+  arrange(desc(sales))
+   
+```
+
+4. What kind of relationship do you think exists between the number of listings and the number of sales? Check your assumption and show your work.
+
+```{r}
+#The relationship between number of listings and number of sales is linearly correlated. As more houses are listed the number of sales house also go up. 
+ggplot(data = txhousing) + 
+  geom_point( mapping = aes(x = listings, y = sales), position = 'jitter', alpha=.6)+
+  ylab('Sales') +
+  xlab('Listings')
+  
+```
+
+
+5. What proportion of sales is missing for each city?
+
+```{r}
+# Here are the missing sales proportion below.
+txhousing %>% group_by(city) %>% 
+  summarize(proportion = mean(is.na(sales)))
+```
+
+6. Looking at only the cities and months with greater than 500 sales:
+
+
+```{r}
+housesale500 <- txhousing %>% group_by(city, month) %>% filter(sales>500)
+housesale500
+```
+
+
+A. Are the distributions of the median sales price (column name median), when grouped by city, different? The same? Show your work.
+
+
+
+```{r}
+#6A. Median sale prices when grouped by city are very different. 
+housesale500 %>% group_by(city) %>%arrange(median)
+```
+
+```{r}
+#6A.  
+# Here you can see the lowest price of house in Fort Worth and Arlington Texas is lower than the BayArea.
+housesale500 %>% group_by(city) %>% summarize(median = median(median)) %>%arrange(median)
+```
+
+```{r}
+#6A.
+# Here you can see that the highest median price of house in Collin Country and Austin is higher than BayArea
+housesale500 %>% group_by(city) %>% summarize(median = median(median)) %>% arrange(desc(median))
+```
+
+```{r}
+#6A.
+# When we look at the median price of houses in a facet we can compare the different cities in a histogram. 
+# In the facet we can see a lot of varying distibution in each city. Austin, El Paso have bimodal histograms.
+# Unimodal histrograms are seen in BayArea, Dallas, Denton County, Collin County, Montgomery County, #FortWorth, Fort Bend, Houston, and NE Tarrant County. 
+# Collin County, Austin, Denton County, Dallas, Fort Bend,Houston, Montgomery County and NE Tarrant County #have a histogram skewing to the right. 
+ggplot(housesale500, aes(x = median)) + 
+  geom_histogram() + 
+  facet_wrap(~ city) 
+```
+
+```{r}
+#6A.
+ggplot(housesale500) + 
+  geom_boxplot(aes(x = city, y = median, fill = city), position = 'dodge') +
+  xlab("CITY") + 
+  ylab("MEDIAN SALES PRICE") + 
+  coord_flip()
+  
+```
+
+6B. Any cities that stand out that you’d want to investigate further?
+
+```{r}
+#6B.
+# It would be interesting to see why Houston, Dallas, Denton County, Auston and San Antonio and  NE Tarrant County had a spike in median prices at the same time. 
+# Why does  Austin, El Paso have bimodal histograms. 
+# Why does  Collin County,Fort Bend, Austin, and Montogomery county have the highest median price.
+# Why does Fort Worth, El Paso, Arlington and Corpus Christi have the lowerest median price. 
+# Why does Corpus Christi have a narrow and stable median price range and Fort Bend and Collin County have a large varying price range. 
+```
+
+ 
+ 
+6C. Why might we want to filter out all cities and months with sales less than 500?
+
+```{r}
+# 6C.
+# We want to filter out the cities and months with sales less than 500  because we don't want to have any bias from our data set. 
+# When the sample size increases our standard error decreases.
+# When the sample size increase the shape of the distribution is less spread out and less variation or noise in the data. 
+```
+
+
+
+
+
