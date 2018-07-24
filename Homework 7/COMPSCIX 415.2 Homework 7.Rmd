@@ -1,0 +1,168 @@
+---
+title: "COMPSCIX 415.2 Homework 7"
+author: "Elaine Phan"
+date: "7/23/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+```{r}
+library(broom)
+library(tidyverse)
+```
+
+Exercise 1
+Load the train.csv dataset into R. How many observations and columns are there?
+
+```{r}
+# There are 20 columns
+file_path <-'/Users/ephan/Desktop/Homework/Homework\ 7/train.csv'
+train.csv <- read_csv(file = file_path)
+```
+
+Exercise 2
+Normally at this point you would spend a few days on EDA, but for this homework we will do some very basic EDA and get right to fitting some linear regression models.
+Our target will be SalePrice.
+• Visualize the distribution of SalePrice.
+• 
+```{r}
+ggplot(data = train.csv , aes(x =SalePrice  )) +
+  geom_histogram() +
+  xlab('Sale Price')
+```
+
+Exercise 2
+Visualize the covariation between SalePrice and Neighborhood. • Visualize the covariation between SalePrice and OverallQual.
+
+```{r}
+ggplot(data = train.csv , aes(x =SalePrice, y = Neighborhood  )) +
+  geom_point() +
+  xlab('Sale Price')+
+  ylab('Neighborhood')
+```
+
+• Visualize the covariation between SalePrice and OverallQual.
+
+```{r}
+ggplot(data = train.csv , aes(x =SalePrice, y = OverallQual  )) +
+  geom_point() +
+  xlab('Sale Price')+
+  ylab('OverallQual')
+```
+
+Exercise 3
+Our target is called SalePrice. First, we can fit a simple regression model consisting of only the intercept (the average of SalePrice). Fit the model and then use the broom package to
+
+
+```{r}
+(SaleP_lm <- lm(formula = SalePrice ~ 1, data = train.csv))
+```
+• take a look at the coefficient,
+• compare the coefficient to the average value of SalePrice, and • take a look at the R-squared.
+
+```{r}
+mean(train.csv$SalePrice)
+library(broom)
+
+tidy(SaleP_lm)
+```
+
+• take a look at the R-squared.
+
+```{r}
+glance(SaleP_lm)
+```
+
+Exercise 4
+Now fit a linear regression model using GrLivArea, OverallQual, and Neighborhood as the features. Don’t forget to look at data_description.txt to understand what these variables mean. Ask yourself these questions before fitting the model:
+• 4A What kind of relationship will these features have with our target? • 4B Can the relationship be estimated linearly?• 4C Are these good features, given the problem we are trying to solve?
+
+```{r}
+#4A The relationship with the features GrLivArea, OverallQual and Neighborhood has a positive association or relationship with our target SalePrice. 
+#4B The relationship can be estimated to be linearly.
+#4C Yes, there are good features to to help solve the correlation of SalePrice.
+diam_mult_lm <- lm(SalePrice ~ GrLivArea + OverallQual+ Neighborhood, data = train.csv)
+tidy(diam_mult_lm)
+
+```
+
+```{r}
+glance(diam_mult_lm)
+```
+
+
+After fitting the model, output the coefficients and the R-squared using the broom package. Answer these questions:
+• 4D How would you interpret the coefficients on GrLivArea and OverallQual? 
+
+The average sale price increase of GrLivArea is $55.6 per every additional above grade (ground) living area square feet.
+
+The average sale price increase of OverallQual is $20,951.42 for a unit of an increase in rates of the overall material and finish of the house 
+
+• 4E How would you interpret the coefficient on NeighborhoodBrkSide?
+That the Neighborhood of BrookSide has an mean sales prices that is 13025.45 less in sales price compared to the base of Neighborhood Bloomington Heights.(not listed neighborhood) 
+
+• 4F Are the features significant?
+We can look at the p valuses to determine the features significant. If the pvalue is low there is significant and when the pvalue is high there is less significant.
+In GrLivArea the pvalue is 2.375376e-94 which is very low and so this feature is significant to the sale price.
+
+In OverallQual the pvalue is 1.238994e-65 which is very low and so this feature is significant to the sale price.
+
+On the other hand, the pvalue for NeighborhoodBrkSide is 2.128206e-01 and this value is higher and this neighborhood might not have a large significants on the sale price of house in this area. 
+
+• 4G Are the features practically significant?
+The average sale price increase of GrLivArea is $55.6 per every additional above grade (ground) living area square feet. For the GrLivArea $55.6 price for a square area is not practically significant if the it is just a small addition but if you have a lare square foot different in a house or acres of property then the GrLivArea makes a very significant difference in sale price. 
+
+The average sale price increase of OverallQual is $20,951.42 for a unit of an increase in rates of the overall material and finish of the house. For the OverallQual feature of $20,951 increase per unit this seems like a very significant freature in the Sale Price. 
+
+The Neighborhood features show significant in some neighborhoods (NeighborhoodNoRidge,NeighborhoodStoneBr ) with over $60,000 more in sale price than Neighborhood Bloomington Heights and not much significant in other neighborhoods such as (NeighborhoodSawyerW,NeighborhoodGilbert) with under $1000  in sale price than Neighborhood Bloomington Heights . 
+
+• 4H Is the model a good fit?
+The R square value for the model was 0.7868484 confirms that this was a good fit model to the training set. 
+
+Exercise 5 (OPTIONAL - won’t be graded)
+Feel free to play around with linear regression. Add some other features and see how the model results change.
+
+Exercise 6
+One downside of the linear model is that it is sensitive to unusual values because the distance incorporates a squared term. Fit a linear model to the simulated data below (use y as the target and x as the feature), and look at the resulting coefficients and R-squared. Rerun it about 5-6 times to generate different simulated datasets. What do you notice about the model’s coefficient on x and the R-squared values?
+
+```{r}
+# There are a lot of change in the slope, coefficients intercept and R square different simulated datasets. 
+# the linear model or line moves up and down the y axis a lot and the x variables still show a linear correlation.
+# The R squared value stays below 1.0 and varies a lot.
+sim1a <- tibble(
+x = rep(1:10, each = 3),
+y = x * 1.5 + 6 + rt(length(x), df = 2)
+)
+
+diam_mult_lm <- lm(y ~ x, data = sim1a)
+diam_mult_lm
+
+tidy(diam_mult_lm)
+
+ggplot(sim1a, aes(x=x, y=y)) + geom_point() + geom_smooth(method=lm, se=FALSE)
+glance(diam_mult_lm)
+```
+
+
+
